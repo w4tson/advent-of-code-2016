@@ -27,7 +27,7 @@ impl Display for Instruction {
 }
 
 pub fn puzzle1a() {
-    let content = read_puzzle_input("aoc1.txt");
+    let content = read_puzzle_input("day1.txt");
     let instructions = content.split(", ");
 
     let (x, y, _) = instructions
