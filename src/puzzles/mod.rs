@@ -1,6 +1,7 @@
 pub mod puzzle1;
 pub mod puzzle2;
 pub mod puzzle2b;
+pub mod puzzle3;
 
 use std::error::Error;
 use std::fs::File;
