@@ -7,6 +7,7 @@ use regex::Regex;
 #[derive(Debug)]
 struct Room {
     name: String,
+    orig_name: String,
     sector: u32,
     checksum: String
 }
@@ -31,6 +32,36 @@ impl Room {
 
         actual_checksum.eq(&self.checksum)
     }
+
+    pub fn decypher(&self) -> String {
+
+        let result : String = self.orig_name.split("-")
+            .map(|s| self.decypher_string(s))
+            .collect::<Vec<String>>()
+            .join(" ");
+        result
+    }
+
+    fn decypher_string(&self, s : &str) -> String {
+        let bytes : Vec<u8> = s.as_bytes()
+            .iter()
+            .map(|b| self.cycle(b))
+            .collect();
+
+        String::from_utf8(bytes).unwrap()
+    }
+
+
+    fn cycle<'a>(&self, b: &'a u8) -> u8{
+        match *b {
+            122 => 122-25,
+            _ => b + 1
+        }
+    }
+
+
+
+
 }
 
 //if the number of occurrences is tied then return the comparison of the alphas
@@ -60,6 +91,24 @@ pub fn puzzle4() {
     println!("Total of valid sectors = {}", sector_total);
 }
 
+pub fn puzzle4b() {
+    let content = read_puzzle_input("day4.txt");
+
+//    let rooms = content.split('\n')
+//        .map(string_to_room)
+//        .collect();
+//
+//    let r = rooms[0];
+
+    let r = Room { name: "qzmtzixmtkozyivhz".to_string(), orig_name: "qzmt-zixmtkozy-ivhz".to_string(), sector:343, checksum:"abcde".to_string()};
+    let decyphered = r.decypher();
+    println!("decyphered = {}", decyphered);
+
+
+
+
+}
+
 fn string_to_room(s: &str) -> Room {
     //third party macro to ensure regex compiled once
     lazy_static! {
@@ -83,5 +132,5 @@ fn create_room (name: &str, sector_str: &str, checksum: &str) -> Room {
 
     let unhypenated_name = name.to_string().replace("-", "");
 
-    Room { name: unhypenated_name , sector: sector, checksum: checksum.to_string() }
+    Room { name: unhypenated_name , orig_name: name.to_string(), sector: sector, checksum: checksum.to_string() }
 }
