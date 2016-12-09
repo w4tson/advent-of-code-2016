@@ -51,17 +51,15 @@ impl Room {
         String::from_utf8(bytes).unwrap()
     }
 
+    fn cycle<'a>(&self, x: &'a u8) -> u8{
+        let rem : u16 = (self.sector as u16 % 26) + *x as u16;
 
-    fn cycle<'a>(&self, b: &'a u8) -> u8{
-        match *b {
-            122 => 122-25,
-            _ => b + 1
-        }
+        let result = match rem {
+            rem if rem > 122 => rem - 26,
+            _ => rem
+        };
+        result as u8
     }
-
-
-
-
 }
 
 //if the number of occurrences is tied then return the comparison of the alphas
@@ -94,19 +92,15 @@ pub fn puzzle4() {
 pub fn puzzle4b() {
     let content = read_puzzle_input("day4.txt");
 
-//    let rooms = content.split('\n')
-//        .map(string_to_room)
-//        .collect();
-//
-//    let r = rooms[0];
+    let rooms : Vec<Room> = content.split('\n')
+        .map(string_to_room)
+        .filter(|r| r.is_checksum_correct())
+        .filter(|r| r.decypher().contains("northpole"))
+        .collect();
 
-    let r = Room { name: "qzmtzixmtkozyivhz".to_string(), orig_name: "qzmt-zixmtkozy-ivhz".to_string(), sector:343, checksum:"abcde".to_string()};
-    let decyphered = r.decypher();
-    println!("decyphered = {}", decyphered);
-
-
-
-
+    for r in rooms {
+        println!("{}", r);
+    }
 }
 
 fn string_to_room(s: &str) -> Room {
