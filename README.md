@@ -11,3 +11,5 @@ Trying to do them using Rust-lang, we'll see how long that goal lasts!
 * Day 3: Terrible shame about step_n() func
 * Day 4.1: Imported a regex crate and became horribly confused with Strings vs &str
 * Day 4.2: Zomg u8 vs u16 grrr
+* Day 5.1: Cheeky BTreeMap
+* Day 5.2: Awesome animation, so l33t
