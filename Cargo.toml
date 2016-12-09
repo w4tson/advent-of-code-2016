@@ -6,3 +6,4 @@ authors = ["Paul Watson <paul.watson@pdwtech.com>"]
 [dependencies]
 regex = "0.1"
 lazy_static = "0.2.2"
+rust-crypto = "0.2.36"
