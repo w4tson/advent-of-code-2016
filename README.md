@@ -13,3 +13,4 @@ Trying to do them using Rust-lang, we'll see how long that goal lasts!
 * Day 4.2: Zomg u8 vs u16 grrr
 * Day 5.1: Cheeky BTreeMap
 * Day 5.2: Awesome animation, so l33t
+* Day 6: Penny slowly dropping about borrowing. Slowly.
