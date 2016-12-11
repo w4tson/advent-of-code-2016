@@ -51,6 +51,7 @@ impl Room {
         String::from_utf8(bytes).unwrap()
     }
 
+
     fn cycle<'a>(&self, x: &'a u8) -> u8{
         let rem : u16 = (self.sector as u16 % 26) + *x as u16;
 
@@ -97,10 +98,21 @@ pub fn puzzle4b() {
         .filter(|r| r.is_checksum_correct())
         .filter(|r| r.decypher().contains("northpole"))
         .collect();
+//
+//    let r = rooms[0];
+
+    //let r = Room { name: "qzmtzixmtkozyivhz".to_string(), orig_name: "qzmt-zixmtkozy-ivhz".to_string(), sector:343, checksum:"abcde".to_string()};
+    //let decyphered = r.decypher();
+    //println!("decyphered = {}", decyphered);
 
     for r in rooms {
         println!("{}", r);
+
     }
+
+
+
+
 }
 
 fn string_to_room(s: &str) -> Room {

@@ -1,3 +1,4 @@
+
 # advent-of-code-2016
 
 My solutions for the [adventofcode.com](http://adventofcode.com/2016)
@@ -14,3 +15,4 @@ Trying to do them using Rust-lang, we'll see how long that goal lasts!
 * Day 5.1: Cheeky BTreeMap
 * Day 5.2: Awesome animation, so l33t
 * Day 6: Penny slowly dropping about borrowing. Slowly.
+* Day 7: RTFM
