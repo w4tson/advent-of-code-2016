@@ -7,6 +7,7 @@ pub mod puzzle5;
 pub mod puzzle6;
 pub mod puzzle7;
 pub mod puzzle8;
+pub mod puzzle9;
 
 use std::error::Error;
 use std::fs::File;
@@ -42,4 +43,11 @@ fn file_to_text(file_name : &str) -> String {
         Ok(_) =>  s
     };
     file_contents
+}
+
+//can't figure out how to easily go from Vec<char> -> String
+#[allow(dead_code)]
+fn to_string(chars : &[char]) -> String {
+    let vec_of_chars : Vec<&char> = chars.into_iter().collect();
+    vec_of_chars.iter().map(|x| **x).collect::<String>()
 }

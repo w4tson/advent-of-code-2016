@@ -22,7 +22,7 @@ pub fn puzzle5() {
         };
 
         //ouput cool animation :D
-        if i % 75 == 0 {
+        if i % 30 == 0 {
             let output : String = (0..8)
             .map(|index| *(pwd.get(&(index as u8)).unwrap_or(&(hash.chars().nth(index).unwrap()))))
             .collect::<String>();

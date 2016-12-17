@@ -52,9 +52,5 @@ fn contains_abba(s : &str) -> bool {
     })
 }
 
-//can't figure out how to easily go from Vec<char> -> String
-#[allow(dead_code)]
-fn to_string(chars : &[char]) -> String {
-    let vec_of_chars : Vec<&char> = chars.into_iter().collect();
-    vec_of_chars.iter().map(|x| **x).collect::<String>()
-}
+
+

@@ -1,11 +1,11 @@
 extern crate aoc;
 
-use aoc::puzzles::puzzle8::puzzle8;
+use aoc::puzzles::puzzle9::puzzle9;
 
 
 
 fn main() {
-    puzzle8();
+    puzzle9();
 
 }
 
