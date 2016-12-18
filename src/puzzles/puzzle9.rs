@@ -21,6 +21,7 @@ impl Display for TokenType {
     }
 }
 
+#[derive(Clone, Debug)]
 struct State {
     token: TokenType,
     compression_length: u64,
@@ -46,7 +47,7 @@ pub fn puzzle9() {
 
     //test the calc_marker
     let a = "(3x3)".chars().collect::<Vec<char>>();
-    let (x, y) = calc_marker(&a[..]);
+    let (x, y) = calc_marker(&a);
     assert_eq!(x * y, 9);
 
     let test0 = "B";
@@ -69,7 +70,7 @@ pub fn puzzle9() {
     assert_eq!(decompressed_length_str(test8), 241920);
     assert_eq!(decompressed_length_str(test9), 445);
     println!("Content: {}", content);
-    println!("{} {}", "Decompressed length = ", decompressed_length_str(&content));
+    println!("{} {}", "Decompressed length = ", decompressed_length_str(&content)); //11558231665
 }
 
 fn decompressed_length_str(str : &str) -> u64 {
@@ -97,29 +98,31 @@ fn reduce(state: State, c : char) -> State {
 }
 
 fn handle_content(state: &State) -> State {
-    State { token: TokenType::Content, compression_length: state.compression_length, compression_factor: state.compression_factor, buf: state.buf.clone(), total: state.total+1 }
+    let s  = state.clone();
+    State { total: state.total + 1,  .. s }
 }
 
 fn handle_marker_start(state: &State) -> State {
-    State { token: TokenType::Marker, compression_length: state.compression_length, compression_factor: state.compression_factor, buf: state.buf.clone(), total: state.total }
+    let s  = state.clone();
+    State { token: TokenType::Marker, .. s }
 }
 
 fn handle_marker(state: &State, c : char) -> State {
-    let mut new_bug = state.buf.clone();
-    new_bug.push(c);
-    State { token: TokenType::Marker, compression_length: state.compression_length, compression_factor: state.compression_factor, buf: new_bug, total: state.total }
+    let mut new_state  = state.clone();
+    new_state.buf.push(c);
+    new_state
 }
 
 fn handle_marker_end(state: &State) -> State {
-    let (x,y) = calc_marker(&state.buf[..]);
-
+    let (x,y) = calc_marker(&state.buf);
     State { token: TokenType::CompressedContent, compression_length: x, compression_factor: y ,buf: vec![], total: state.total }
 }
 
 fn handle_compression(state: &State, c: char) -> State {
-    let mut new_buffer = state.buf.clone();
-    new_buffer.push(c);
-    State { token: TokenType::CompressedContent, compression_length: state.compression_length -1, compression_factor: state.compression_factor, buf: new_buffer, total: state.total }
+    let mut new_state = state.clone();
+    new_state.buf.push(c);
+    new_state.compression_length -= 1;
+    new_state
 }
 
 fn handle_compression_end(state: &State, c: char) -> State {
@@ -129,9 +132,8 @@ fn handle_compression_end(state: &State, c: char) -> State {
     State { token: TokenType::Content, compression_length: 0, compression_factor: 0, buf: vec![], total: state.total + (decompressed_length*state.compression_factor )}
 }
 
-fn calc_marker(s : &[char]) -> (u64, u64) {
-    let vec_of_chars : Vec<&char> = s.into_iter().collect();
-    let marker = vec_of_chars.iter().map(|x| **x).collect::<String>();
+fn calc_marker(vec_of_chars : &Vec<char>) -> (u64, u64) {
+    let marker = vec_of_chars.iter().map(|x| *x).collect::<String>();
 
     lazy_static! {
        static ref RE: Regex = Regex::new(r"(\d+)+x(\d+)").unwrap();
@@ -148,4 +150,3 @@ fn calc_marker(s : &[char]) -> (u64, u64) {
 
     }
 }
-
