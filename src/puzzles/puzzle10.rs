@@ -9,6 +9,8 @@ enum BotType {
     Output(u32)
 }
 
+type Bots = Vec<Bot>;
+
 impl Display for BotType {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         match *self {
@@ -23,7 +25,8 @@ struct Bot {
     name : BotType,
     inputs: (Option<u32>, Option<u32>),
     high: BotType,
-    low: BotType
+    low: BotType,
+    delivered: bool   //tracks whether this bot has delivered its payload to its low and high locations
 }
 
 impl Bot {
@@ -34,15 +37,6 @@ impl Bot {
         BOT_INSTRUCTION.is_match(&s)
     }
 
-//    pub fn add_value(&self, val : u32) -> Bot {
-//        let new_inputs = match self.inputs {
-//            (Some(a), None) | (None, Some(a)) => (Some(a), Some(val)),
-//            (None, None)  => (Some(val), None),
-//            _ => panic!("fully initialized")
-//        };
-//        Bot { name: self.name, inputs: new_inputs, high: self.high, low: self.low }
-//    }
-//
     pub fn add_value(&mut self, val : u32) {
         let new_inputs = match self.inputs {
             (Some(a), None) | (None, Some(a)) => (Some(a), Some(val)),
@@ -51,6 +45,29 @@ impl Bot {
         };
         //Bot { name: self.name, inputs: new_inputs, high: self.high, low: self.low }
         self.inputs = new_inputs;
+    }
+
+    pub fn has_2_inputs(&self) -> bool {
+        match (self.inputs, self.delivered) {
+            ((Some(_), Some(_)), false) => true,
+            _ => false
+        }
+    }
+
+    pub fn get_low_value(&self) -> u32 {
+        match self.inputs {
+            (Some(i), Some(j)) if i < j => i,
+            (Some(_), Some(k)) => k,
+            _ => panic!("problem getting low value for bot {}", self)
+        }
+    }
+
+    pub fn get_high_value(&self) -> u32 {
+        match self.inputs {
+            (Some(i), Some(j)) if i > j => i,
+            (Some(_), Some(k)) => k,
+            _ => panic!("problem getting high value for bot {}", self)
+        }
     }
 }
 
@@ -72,7 +89,7 @@ pub fn puzzle10() {
         .split('\n')
         .filter(|b| Bot::is_bot_definition(b))
         .map(to_bot)
-        .collect::<Vec<Bot>>();
+        .collect::<Bots>();
 
     for bot in &bots {
         println!("{} ", bot);
@@ -88,14 +105,54 @@ pub fn puzzle10() {
     assert_eq!(21, initializations.len());
 
 
-
-
+    //intialize the bots
     for &(init_value, bot_num) in &initializations {
-        let bot = get_bot_by_id(&bots, bot_num);
-        //bot.add_value(init_value);
+        let bot : &mut Bot = get_bot_by_id(&mut bots, bot_num);
+
+        bot.add_value(init_value);
         println!("instruction {}", bot);
     }
 
+    assert_eq!(true, has_bots_with_2_inputs(&bots));
+
+    while has_bots_with_2_inputs(&bots) {
+        let bot = bots.iter().find(|bot| bot.has_2_inputs()).unwrap();
+        let (is_low_bot, id_low) = is_bot(&(bot.low));
+        let (is_high_bot, id_high) = is_bot(&(bot.high));
+
+//        if is_low_bot {
+//            let mut low_bot = get_bot_by_id(&mut bots, id_low);
+//            low_bot.add_value(bot.get_low_value());
+//        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+fn is_bot(maybe_bot: &BotType) -> (bool, u32) {
+    match *maybe_bot {
+        BotType::Bot(id) => (true, id),
+        BotType::Output(id) => (false, id)
+    }
+}
+
+fn has_bots_with_2_inputs(bots : &Bots) -> bool {
+    bots.iter()
+        .any(|bot| bot.has_2_inputs())
 }
 
 fn init_tuple(s : &str) -> (u32, u32) {
@@ -116,8 +173,8 @@ fn init_tuple(s : &str) -> (u32, u32) {
     }
 }
 
-fn get_bot_by_id(bots: &Vec<Bot>, id: u32) -> &Bot {
-    match bots.iter().find(|b| {
+fn get_bot_by_id(bots: &mut Vec<Bot>, id: u32) -> &mut Bot {
+    match bots.iter_mut().find(|b| {
         match b.name {
             BotType::Output(i) | BotType::Bot(i) if id == i => true,
             _ => false
@@ -156,5 +213,5 @@ fn to_bot(s: &str) -> Bot {
         _ => BotType::Output(low_num)
     };
 
-    Bot { name: BotType::Bot(bot_number), inputs: (None, None), low: low, high: high}
+    Bot { name: BotType::Bot(bot_number), inputs: (None, None), low: low, high: high, delivered: false }
 }
