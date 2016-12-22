@@ -16,3 +16,6 @@ Trying to do them using Rust-lang, we'll see how long that goal lasts!
 * Day 5.2: Awesome animation, so l33t
 * Day 6: Penny slowly dropping about borrowing. Slowly.
 * Day 7: RTFM
+* Day 8: Bosh
+* Day 9: Getting the hang of mutability
+* Day 10: Almost threw in the towel. Instead discovered wrapper types and the RefCell
